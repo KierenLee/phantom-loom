@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: Sandbox File API
+  version: 1.0.0
+paths:
+  /api/sandbox/{path}:
+    parameters:
+      - name: path
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Relative path to the file within the workspace (e.g., "thread-123/config.json")
+    post:
+      summary: Save a file to the workspace
+      description: Writes content to a file. Overwrites if exists.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The JSON content to save
+          text/plain:
+            schema:
+              type: string
+              description: The text content to save
+      responses:
+        '200':
+          description: File saved successfully
+        '400':
+          description: Path not specified
+        '403':
+          description: Access denied (path traversal attempt)
+        '500':
+          description: Internal Server Error

@@ -1,0 +1,17 @@
+mcp_servers:
+  - name: semi-react-mcp
+    type: stdio
+    command: npx
+    args: ['--registry', 'https://bnpm.byted.org', '-y', '@ies/semi-mcp-bytedance']
+    timeout: 100s
+  - name: bytedance-figma-mcp
+    command: npx
+    args:
+      - --registry=https://bnpm.byted.org
+      - -y
+      - '@byted/bytedance-figma-mcp'
+      - --stdio
+    timeout: 100s
+    env:
+      - key: FIGMA_API_KEY
+        value: figd_K4gwzgGsHGQmqfeSFIWWh6GAgnQ0RAEX14-1tPzJ
