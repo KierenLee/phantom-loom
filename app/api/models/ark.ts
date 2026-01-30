@@ -1,7 +1,7 @@
 import { createOpenAI } from "@ai-sdk/openai";
 
 export const ark = createOpenAI({
-  baseURL: "https://ark-cn-beijing.bytedance.net/api/v3",
+  baseURL: process.env.ARK_API_BASE_URL,
   apiKey: process.env.ARK_API_KEY,
 });
 
