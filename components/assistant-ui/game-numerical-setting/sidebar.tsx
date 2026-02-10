@@ -16,6 +16,7 @@ import { Toast } from "@douyinfe/semi-ui-19";
 import { useMemoizedFn, useRequest } from "ahooks";
 import { useGameSettingsStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import qs from "querystring";
 
 function ActionWrapper({
   children,
@@ -24,6 +25,7 @@ function ActionWrapper({
   initialData: Record<string, unknown>;
 }) {
   const { data } = useData();
+  const { settingArgs } = useGameSettingsStore();
 
   const save = useMemoizedFn(async () => {
     const threadId = sessionStorage.getItem("thread_id");
@@ -33,20 +35,48 @@ function ActionWrapper({
     }
 
     try {
-      const response = await fetch(`/api/sandbox/${threadId}/config.json`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        Toast.success(`保存成功!`);
-        console.log("GameNumericalSetting saved data:", data);
+      const sandboxSessionId = settingArgs?.sandboxData?.sessionId;
+      if (sandboxSessionId) {
+        const response = await fetch(
+          `/api/proxy?url=${encodeURIComponent(
+            `${qs.parse(location.search.slice(1)).server_api_host || ""}/v1/file/write`,
+          )}&isJSONResponse=true`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              session_id: sandboxSessionId,
+              content: JSON.stringify(data),
+              append: false,
+              file: "/home/tiger/config.json",
+            }),
+          },
+        );
+        if (response.ok) {
+          Toast.success(`保存成功!`);
+          console.log("GameNumericalSetting saved data:", data);
+        } else {
+          const errorText = await response.text();
+          Toast.error(`保存失败: ${errorText}`);
+        }
       } else {
-        const errorText = await response.text();
-        Toast.error(`保存失败: ${errorText}`);
+        const response = await fetch(`/api/sandbox/${threadId}/config.json`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          Toast.success(`保存成功!`);
+          console.log("GameNumericalSetting saved data:", data);
+        } else {
+          const errorText = await response.text();
+          Toast.error(`保存失败: ${errorText}`);
+        }
       }
     } catch (error) {
       console.error("Save error:", error);
@@ -99,7 +129,7 @@ const DashboardContent = memo(
           </div>
         )}
 
-        <div className="group relative min-h-[200px] min-w-[400px] rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="group relative min-h-[200px] rounded-lg border border-border bg-card p-6 shadow-sm">
           <div className="absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               onClick={async () => {
@@ -161,6 +191,9 @@ export const GameNumericalSettingSidebar = memo(() => {
   const { initialData, dataSchema, title } = settingArgs;
 
   if (!initialData || !dataSchema) {
+    console.error(
+      "GameNumericalSettingSidebar: missing initialData or dataSchema",
+    );
     return null;
   }
 
@@ -169,6 +202,7 @@ export const GameNumericalSettingSidebar = memo(() => {
   try {
     initialDataObj = JSON.parse(initialData);
   } catch {
+    console.error("Failed to parse initialData as JSON:", initialData);
     return null;
   }
 

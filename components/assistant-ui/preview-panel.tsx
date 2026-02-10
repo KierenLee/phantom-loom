@@ -7,7 +7,8 @@ import { useState, useEffect } from "react";
 import { useRequest } from "ahooks";
 
 export const PreviewPanel = () => {
-  const { previewUrl, title, isOpen, closePreview } = usePreviewStore();
+  const { previewUrl, title, isOpen, sandboxData, closePreview } =
+    usePreviewStore();
   const [iframeKey, setIframeKey] = useState(0);
   const [lastConfig, setLastConfig] = useState<string>("");
 
@@ -18,10 +19,12 @@ export const PreviewPanel = () => {
       const threadId = sessionStorage.getItem("thread_id");
       if (!threadId) return;
 
+      const previewUrlWithSessionId =
+        sandboxData?.configUrl ||
+        `/api/sandbox/${threadId}/config.json?type=query`;
+
       try {
-        const res = await fetch(
-          `/api/sandbox/${threadId}/config.json?type=query`,
-        );
+        const res = await fetch(previewUrlWithSessionId);
         if (res.ok) {
           const text = await res.text();
           // Initialize lastConfig on first load without triggering reload

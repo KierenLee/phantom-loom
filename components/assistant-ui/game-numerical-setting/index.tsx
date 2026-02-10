@@ -5,6 +5,7 @@ import { makeAssistantToolUI } from "@assistant-ui/react";
 import { useGameSettingsStore, GameNumericalSettingArgs } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Settings2 } from "lucide-react";
+import { Toast } from "@douyinfe/semi-ui-19";
 
 const GameNumericalSettingTool = ({
   args,
@@ -29,8 +30,13 @@ const GameNumericalSettingTool = ({
         variant="outline"
         size="sm"
         onClick={() => {
+          if (args && args.initialData) {
+            console.log("🛠️[debug] GameNumericalSettingTool args", args);
             setSettings(args);
             openSettings();
+          } else {
+            Toast.error("Ops....未生成游戏配置");
+          }
         }}
       >
         在右侧面板打开设置

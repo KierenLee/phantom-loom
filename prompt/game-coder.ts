@@ -52,5 +52,4 @@ export const GameCodeGeneratorPrompt = `
 # Output 要求
 1. 在生成的 \`index.html\` 或 \`game.js\` 的顶部，请输出一段“资产装配清单”注释，说明代码最终识别并使用了哪些 JSON 字段和哪些图片资源。
 2. game.js中通过 \`import config from "./config.json" with { type: "json" };\` 来引入游戏配置文件。
-3. game.js中通过 \`import assert from "./assert.json" with { type: "json" };\` 来引入游戏资产索引文件。
 `;

@@ -9,12 +9,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const ToolsId2Name = {
-  requirementAnalyst: "🤖 Sub agent：游戏需求分析",
-  materialGenerator: "🤖 Sub agent：素材生成",
-  gameCodeGenerator: "🤖 Sub agent：游戏代码生成",
-};
-
 export const ToolFallback: ToolCallMessagePartComponent = ({
   toolName,
   argsText,
@@ -23,7 +17,6 @@ export const ToolFallback: ToolCallMessagePartComponent = ({
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const customToolName = ToolsId2Name[toolName as keyof typeof ToolsId2Name];
   const isCancelled =
     status?.type === "incomplete" && status.reason === "cancelled";
   const cancelledReason =
@@ -52,14 +45,8 @@ export const ToolFallback: ToolCallMessagePartComponent = ({
             isCancelled && "text-muted-foreground line-through",
           )}
         >
-          {customToolName ? (
-            customToolName
-          ) : (
-            <>
-              {isCancelled ? "🚫 已取消工具调用: " : "🔧 使用工具: "}
-              <b>{toolName}</b>
-            </>
-          )}
+          {isCancelled ? "已取消工具调用: " : "使用工具: "}
+          <b>{toolName}</b>
         </p>
         <Button onClick={() => setIsCollapsed(!isCollapsed)}>
           {isCollapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}

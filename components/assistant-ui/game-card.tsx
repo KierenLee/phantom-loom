@@ -1,16 +1,23 @@
 "use client";
 
-import { makeAssistantToolUI } from "@assistant-ui/react";
-import { usePreviewStore } from "@/lib/store";
+import {
+  makeAssistantToolUI,
+  useAssistantApi,
+  useAssistantState,
+} from "@assistant-ui/react";
+import { SandboxData, usePreviewStore } from "@/lib/store";
+import { useEffect } from "react";
 
 interface GameCardArgs {
   title: string;
   description: string;
   imageUrl: string;
+  sandboxData?: SandboxData;
 }
 
 const GameCardView = ({ args }: { args: GameCardArgs }) => {
-  const { setPreview } = usePreviewStore();
+  console.log("🛠️[debug] GameCardView args", args);
+  const { setPreview, setSandboxData } = usePreviewStore();
 
   const getPreviewUrl = () => {
     return `/api/sandbox/${sessionStorage.getItem("thread_id")}/index.html`;
@@ -18,11 +25,17 @@ const GameCardView = ({ args }: { args: GameCardArgs }) => {
 
   const handlePreview = (e: React.MouseEvent) => {
     e.preventDefault();
-    const url = getPreviewUrl();
+    const url = args.sandboxData?.url || getPreviewUrl();
     if (url) {
       setPreview(url, args.title);
     }
   };
+
+  useEffect(() => {
+    if (args.sandboxData) {
+      setSandboxData(args.sandboxData);
+    }
+  }, [args.sandboxData, setSandboxData]);
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border bg-card p-4 shadow-sm">

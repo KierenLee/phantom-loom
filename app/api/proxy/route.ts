@@ -8,6 +8,7 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
   const url = new URL(req.url);
   const targetUrl = url.searchParams.get("url");
+  const isJSONResponse = url.searchParams.get("isJSONResponse") === "true";
 
   if (!targetUrl) {
     return new Response("Missing url parameter", { status: 400 });
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    
+
     // 转发请求到目标 URL
     const response = await fetch(targetUrl, {
       method: "POST",
@@ -25,6 +26,15 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify(body),
     });
+
+    if (isJSONResponse) {
+      const jsonBody = await response.json();
+      return new Response(JSON.stringify(jsonBody), {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+      });
+    }
 
     // 返回流式响应
     return new Response(response.body, {

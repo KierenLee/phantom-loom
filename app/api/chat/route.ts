@@ -213,6 +213,17 @@ export async function POST(req: Request) {
           .string()
           .describe("游戏封面图，通常是路径在 images 目录下的 avatar.png")
           .default(`/api/sandbox/${threadId}/images/avatar.png`),
+        sandboxData: z
+          .object({
+            url: z.string().describe("The url of the game sandbox"),
+            sessionId: z
+              .string()
+              .describe("The session id of the game sandbox"),
+            configUrl: z
+              .string()
+              .describe("The config url of the game sandbox"),
+          })
+          .describe("The sandbox data for the game"),
       }),
       execute: async (args) => args,
     }),
