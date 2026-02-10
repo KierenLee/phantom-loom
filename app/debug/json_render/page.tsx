@@ -18,7 +18,6 @@ import {
 } from "@/components/json-render/code-highlight";
 import { cn } from "@/lib/utils";
 import { Toast } from "@douyinfe/semi-ui-19";
-import { ModeToggle } from "@/components/mode-toggle";
 
 function ActionWrapper({
   children,
@@ -340,7 +339,7 @@ export default function DashboardPage() {
   return (
     <>
       <div className="border-b border-border bg-card p-4">
-        <div className="mx-auto flex max-w-screen-lg flex-row">
+        <div className="mx-auto max-w-screen-lg">
           <label className="mb-2 block text-sm font-medium text-foreground">
             初始数据 (JSON)
           </label>
@@ -353,7 +352,6 @@ export default function DashboardPage() {
             rows={5}
             className="w-full resize-y rounded-lg border border-input bg-background px-4 py-3 font-mono text-sm text-foreground shadow-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring"
           />
-          <ModeToggle />
         </div>
       </div>
       <DashboardRender initialDataString={initialDataString} />

@@ -55,4 +55,4 @@ export const GameRequirementAnalystPrompt = `
 # Constraint
 1. **职责分离**：\`config.json\` 仅负责“怎么玩”，\`assert.json\` 仅负责“长什么样”。
 2. **环境适配**：仅限原生 JavaScript + HTML5 Canvas。
-3. **输出要求**：Markdown 文档输出保存在 ./docs/。JSON 文件输出保存在 ./ 目录。语言：中文（Prompt 除外）。`;
+3. **输出要求**：Markdown 文档输出保存在 ./docs/。JSON 文件输出保存在 ./ 目录。语言：中文（Prompt 除外）。`

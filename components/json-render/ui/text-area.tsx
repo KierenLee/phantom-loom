@@ -27,7 +27,7 @@ export function TextArea({ element }: ComponentRenderProps) {
   const validationOptions = useMemo(
     () => ({
       checks: checks ?? undefined,
-      validateOn: (validateOn as "change" | "blur" | "submit") ?? "blur",
+      validateOn: (validateOn as "change" | "blur" | "submit") ?? "submit",
     }),
     [checks, validateOn],
   );
@@ -39,7 +39,7 @@ export function TextArea({ element }: ComponentRenderProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
         {label}
       </label>
       <textarea
@@ -55,8 +55,10 @@ export function TextArea({ element }: ComponentRenderProps) {
         placeholder={placeholder ?? ""}
         rows={rows ?? 3}
         className={cn(
-          "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
-          errors.length > 0 ? "border-destructive focus-visible:ring-destructive" : ""
+          "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+          errors.length > 0
+            ? "border-destructive focus-visible:ring-destructive"
+            : "",
         )}
       />
       {errors.map((error, i) => (

@@ -1,12 +1,21 @@
-import { create } from 'zustand';
+import { create } from "zustand";
+
+export interface SandboxData {
+  url: string;
+  sessionId: string;
+  configUrl: string;
+}
 
 interface PreviewState {
   previewUrl: string | null;
   title: string | null;
   isOpen: boolean;
+  sandboxData?: SandboxData;
+
   setPreview: (url: string, title: string) => void;
   closePreview: () => void;
   togglePreview: () => void;
+  setSandboxData: (data: SandboxData) => void;
 }
 
 export const usePreviewStore = create<PreviewState>((set) => ({
@@ -16,21 +25,23 @@ export const usePreviewStore = create<PreviewState>((set) => ({
   setPreview: (url, title) => set({ previewUrl: url, title, isOpen: true }),
   closePreview: () => set({ isOpen: false }),
   togglePreview: () => set((state) => ({ isOpen: !state.isOpen })),
+  setSandboxData: (data) => set({ sandboxData: data }),
 }));
 
 export interface GameNumericalSettingArgs {
   title: string;
   initialData: string; // JSON string
-  dataSchema: string;  // JSON string
+  dataSchema: string; // JSON string
+  sandboxData?: SandboxData;
 }
 
 interface GameSettingsState {
   // Data received from the LLM Tool
   settingArgs: GameNumericalSettingArgs | null;
-  
+
   // Visibility state
   isOpen: boolean;
-  
+
   // Actions
   setSettings: (args: GameNumericalSettingArgs) => void;
   openSettings: () => void;
