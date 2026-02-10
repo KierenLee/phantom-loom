@@ -38,9 +38,7 @@ function ActionWrapper({
       const sandboxSessionId = settingArgs?.sandboxData?.sessionId;
       if (sandboxSessionId) {
         const response = await fetch(
-          `/api/proxy?url=${encodeURIComponent(
-            `${qs.parse(location.search.slice(1)).server_api_host || ""}/v1/file/write`,
-          )}&isJSONResponse=true`,
+          `${qs.parse(location.search.slice(1)).server_api_host || ""}/v1/file/write`,
           {
             method: "POST",
             headers: {
