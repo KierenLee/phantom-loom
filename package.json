@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "npx next build && cp -r skills .next/skills && mkdir -p .next/workspace",
+    "build": "npx next build && cp -r ./static/skills .next/static/skills && mkdir -p .next/static/workspace",
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier --check .",

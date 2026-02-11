@@ -23,7 +23,7 @@ import { imageGenerationPrompt } from "@/prompt/generate-image";
 
 // Discover skills and get files to upload
 // const { skill, files, instructions } = await createSkillTool({
-//   skillsDirectory: "./skills",
+//   skillsDirectory: "./static/skills",
 // });
 
 /**
@@ -44,7 +44,9 @@ export async function POST(req: Request) {
   const { tools: bashTools } = await createBashTool({
     // files,
     // extraInstructions: instructions,
-    sandbox: new LocalSandbox(join(process.cwd(), "workspace", threadId)),
+    sandbox: new LocalSandbox(
+      join(process.cwd(), "./static/workspace", threadId),
+    ),
     // Remove destination override to use default /workspace virtual path,
     // which maps to physical ./workspace via LocalSandbox
   });

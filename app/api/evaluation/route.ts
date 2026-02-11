@@ -12,7 +12,7 @@ import { join, resolve } from "path";
 import fs from "fs";
 
 const { skill, files, instructions } = await createSkillTool({
-  skillsDirectory: "./skills",
+  skillsDirectory: "./static/skills",
 });
 
 export async function POST(req: Request) {
