@@ -1,4 +1,4 @@
-import { gemini } from "../models/gemini";
+import { modelConfig } from "../../models/config";
 import { streamText } from "ai";
 import { componentList } from "@/lib/catalog";
 
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
   }
 
   const result = streamText({
-    model: gemini("gemini-2.0-flash"),
+    model: modelConfig.chat.gemini3Flash,
     system: SYSTEM_PROMPT,
     prompt: fullPrompt,
     temperature: 0.7,

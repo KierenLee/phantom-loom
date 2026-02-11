@@ -95,7 +95,7 @@ const getApiUrl = () => {
     currentBaseUrl.startsWith("http://") ||
     currentBaseUrl.startsWith("https://")
   ) {
-    return urlWithThread;
+    return `/api/proxy?url=${encodeURIComponent(urlWithThread)}`;
   }
 
   return urlWithThread;

@@ -4,15 +4,15 @@ import {
   type UIMessage,
   tool,
   generateText,
+  stepCountIs,
 } from "ai";
-import { gemini, genAI } from "../models/gemini";
+import { modelConfig } from "../../models/config";
 import { z } from "zod";
 import {
   experimental_createSkillTool as createSkillTool,
   createBashTool,
 } from "bash-tool";
 import { LocalSandbox } from "@/lib/tools/local-sandbox";
-import { doubaoSeed } from "../models/ark";
 import { join, resolve } from "path";
 import { GameRequirementAnalystPrompt } from "@/prompt/game-requirement-analyst";
 import { GameCodeGeneratorPrompt } from "@/prompt/game-coder";
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
 
         // TODO: 替换 generateImage
         // TODO：并发调用，提高效率
-        const response = await genAI.models.generateContent({
+        const response = await modelConfig.image.genAI.models.generateContent({
           model: "gemini-2.5-flash-image",
           config: {
             systemInstruction: {
@@ -135,32 +135,67 @@ export async function POST(req: Request) {
   };
 
   /** 需求分析agent核心逻辑 */
-  const requirementAnalystAgent = (prompt: string) => {
-    return generateText({
-      model: gemini("gemini-2.0-flash"),
-      system: GameRequirementAnalystPrompt,
-      prompt,
-      tools: bashTools, // Needs file access to write docs
-    });
+  const requirementAnalystAgent = async (prompt: string) => {
+    try {
+      const result = await generateText({
+        model: modelConfig.chat.gemini3Flash,
+        system: GameRequirementAnalystPrompt,
+        prompt,
+        tools: bashTools, // Needs file access to write docs
+        stopWhen: stepCountIs(20),
+        // 移除不兼容的reasoningSummary选项，避免API错误
+        providerOptions: {
+          openai: {
+            reasoningEffort: "low",
+          },
+          gemini: {
+            reasoningEffort: "low",
+          },
+        },
+      });
+      return result;
+    } catch (error) {
+      console.log("requirementAnalystAgent error", error);
+    }
   };
 
   /** 素材生成agent */
   const materialGeneratorAgent = (prompt: string) => {
     return generateText({
-      model: gemini("gemini-2.0-flash"),
+      model: modelConfig.chat.gemini3Flash,
       system: MaterialGeneratorPrompt,
       prompt,
       tools: coreTools, // Needs image generation tool and file access
+      stopWhen: stepCountIs(20),
+      // 移除不兼容的reasoningSummary选项，避免API错误
+      providerOptions: {
+        openai: {
+          reasoningEffort: "low",
+        },
+        gemini: {
+          reasoningEffort: "low",
+        },
+      },
     });
   };
 
   /** 游戏代码生成agent */
   const gameCodeGeneratorAgent = (prompt: string) => {
     return generateText({
-      model: gemini("gemini-2.0-flash"),
+      model: modelConfig.chat.gemini3Flash,
       system: GameCodeGeneratorPrompt,
       prompt,
       tools: bashTools, // Needs file access to read docs/images and write code
+      stopWhen: stepCountIs(20),
+      // 移除不兼容的reasoningSummary选项，避免API错误
+      providerOptions: {
+        openai: {
+          reasoningEffort: "low",
+        },
+        gemini: {
+          reasoningEffort: "low",
+        },
+      },
     });
   };
 
@@ -174,7 +209,7 @@ export async function POST(req: Request) {
       }),
       execute: async (args) => {
         const result = await requirementAnalystAgent(args.prompt);
-        return result.text;
+        return result?.text;
       },
     }),
     /** 素材生成 */
@@ -213,17 +248,6 @@ export async function POST(req: Request) {
           .string()
           .describe("游戏封面图，通常是路径在 images 目录下的 avatar.png")
           .default(`/api/sandbox/${threadId}/images/avatar.png`),
-        sandboxData: z
-          .object({
-            url: z.string().describe("The url of the game sandbox"),
-            sessionId: z
-              .string()
-              .describe("The session id of the game sandbox"),
-            configUrl: z
-              .string()
-              .describe("The config url of the game sandbox"),
-          })
-          .describe("The sandbox data for the game"),
       }),
       execute: async (args) => args,
     }),
@@ -248,7 +272,7 @@ export async function POST(req: Request) {
   };
 
   const result = streamText({
-    model: doubaoSeed,
+    model: modelConfig.chat.gemini2Flash,
     system: `你是一个游戏开发总指挥。你的目标是根据用户输入，指挥团队完成游戏开发。
 
     必须严格遵守以下工作流，依次调用工具：
@@ -277,6 +301,7 @@ export async function POST(req: Request) {
       ...coreTools, // Main agent also has access to basic tools if needed
       ...a2uiTools,
     },
+    stopWhen: stepCountIs(20),
     // 移除不兼容的reasoningSummary选项，避免API错误
     providerOptions: {
       openai: {

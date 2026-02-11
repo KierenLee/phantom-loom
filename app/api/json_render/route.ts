@@ -1,7 +1,6 @@
 import { GameVisualizationPrompt } from "@/prompt/json-render";
 import { streamText } from "ai";
-import { kimiK2 } from "../models/ark";
-import { models } from "../models/gemini";
+import { modelConfig } from "../../models/config";
 
 export const maxDuration = 30;
 
@@ -20,7 +19,7 @@ export async function POST(req: Request) {
   }
 
   const result = streamText({
-    model: kimiK2,
+    model: modelConfig.chat.gemini3Flash,
     system: GameVisualizationPrompt,
     prompt: fullPrompt,
     temperature: 0.7,

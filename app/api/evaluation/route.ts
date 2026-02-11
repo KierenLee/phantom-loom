@@ -1,7 +1,6 @@
 import { createGameEvaluationPrompt } from "@/prompt/game-evaluation";
-import { doubaoSeed } from "../models/ark";
 import { generateImage } from "ai";
-import { doubaoSeedImage } from "../models/ark";
+import { modelConfig } from "../../models/config";
 import { streamText, convertToModelMessages, type UIMessage, tool } from "ai";
 import { z } from "zod";
 import {
@@ -58,7 +57,7 @@ export async function POST(req: Request) {
 
         // 1. 调用生图模型
         const { image } = await generateImage({
-          model: doubaoSeedImage,
+          model: modelConfig.image.doubaoSeed,
           prompt,
           aspectRatio: aspectRatio, // 注意：部分模型可能对比例支持有限制
           n: 1,
@@ -87,7 +86,7 @@ export async function POST(req: Request) {
   };
 
   const result = streamText({
-    model: doubaoSeed,
+    model: modelConfig.chat.gemini3Flash,
     system: createGameEvaluationPrompt({ sessionId: threadId }),
     messages: await convertToModelMessages(messages),
     tools: {
