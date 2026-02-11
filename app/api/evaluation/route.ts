@@ -11,6 +11,12 @@ import { LocalSandbox } from "@/lib/tools/local-sandbox";
 import { join, resolve } from "path";
 import fs from "fs";
 
+// 检测 static 和 static/workspace 是否有文件夹，没有则创建一个
+const workspacePath = join(process.cwd(), "./workspace");
+if (!fs.existsSync(workspacePath)) {
+  fs.mkdirSync(workspacePath, { recursive: true });
+}
+
 const { skill, files, instructions } = await createSkillTool({
   skillsDirectory: "./static/skills",
 });
