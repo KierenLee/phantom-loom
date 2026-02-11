@@ -108,16 +108,8 @@ const Page = memo(() => {
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     transport: new AssistantChatTransport({
       api: getApiUrl(),
-      prepareSendMessagesRequest: (request) => {
-        const sessionId = getSessionId();
-        return {
-          ...request,
-          body: request.body || {},
-          headers: {
-            ...request.headers,
-            "custom-session-id": sessionId || "",
-          },
-        };
+      headers: {
+        "custom-session-id": getSessionId(),
       },
     }),
   });
