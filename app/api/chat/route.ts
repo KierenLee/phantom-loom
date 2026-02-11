@@ -26,12 +26,6 @@ import { imageGenerationPrompt } from "@/prompt/generate-image";
 //   skillsDirectory: "./static/skills",
 // });
 
-// 检测 static 和 static/workspace 是否有文件夹，没有则创建一个
-const workspacePath = path.join(process.cwd(), "./workspace");
-if (!fs.existsSync(workspacePath)) {
-  fs.mkdirSync(workspacePath, { recursive: true });
-}
-
 /**
  * Handle POST requests for the chat API
  * @param req The request object
@@ -109,10 +103,7 @@ export async function POST(req: Request) {
           if (part.inlineData) {
             const imageData = part.inlineData.data;
 
-            const imagesDir = resolve(
-              process.cwd(),
-              `${workspacePath}/${threadId}/images`,
-            );
+            const imagesDir = resolve(process.cwd(), `${threadId}/images`);
             if (!fs.existsSync(imagesDir)) {
               fs.mkdirSync(imagesDir, { recursive: true });
             }
@@ -293,7 +284,6 @@ export async function POST(req: Request) {
 
     **重要约束**:
     *   工作流中每一步需要用户“确认无误”后方可进入下一步，不能跳跃。
-    *   所有工作都在 ./workspace 沙箱中进行（workspace 是每个 thread 所在的父目录，你不必新建 workspace 目录)。
     *   严禁在沙箱外进行 bash 操作。
     *   最后使用 \`displayGameMockup\` 展示成果。
 
