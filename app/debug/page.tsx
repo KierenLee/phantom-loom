@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { getSessionId } from "@/lib/utils";
 
 const STORAGE_KEY = "phantom_loom_api_url";
 
@@ -79,12 +80,7 @@ const getApiUrl = () => {
       currentBaseUrl = stored;
     }
 
-    let id = sessionStorage.getItem("thread_id");
-    if (!id) {
-      id = Math.random().toString(36).substring(7);
-      sessionStorage.setItem("thread_id", id);
-    }
-    threadId = id;
+    threadId = getSessionId();
   }
 
   const separator = currentBaseUrl.includes("?") ? "&" : "?";
@@ -112,6 +108,17 @@ const Page = memo(() => {
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     transport: new AssistantChatTransport({
       api: getApiUrl(),
+      prepareSendMessagesRequest: (request) => {
+        const sessionId = getSessionId();
+        return {
+          ...request,
+          body: request.body || {},
+          headers: {
+            ...request.headers,
+            "custom-session-id": sessionId || "",
+          },
+        };
+      },
     }),
   });
 

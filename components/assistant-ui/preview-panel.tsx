@@ -1,4 +1,5 @@
 "use client";
+import { getSessionId } from "@/lib/utils";
 
 import { X } from "lucide-react";
 import { usePreviewStore } from "@/lib/store";
@@ -24,7 +25,12 @@ export const PreviewPanel = () => {
         `/api/sandbox/${threadId}/config.json?type=query`;
 
       try {
-        const res = await fetch(previewUrlWithSessionId);
+        const res = await fetch(previewUrlWithSessionId, {
+          headers: {
+            "Content-Type": "application/json",
+            "custom-session-id": getSessionId(),
+          },
+        });
         if (res.ok) {
           const text = await res.text();
           // Initialize lastConfig on first load without triggering reload

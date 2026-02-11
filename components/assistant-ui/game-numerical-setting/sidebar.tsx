@@ -1,5 +1,7 @@
 "use client";
 
+import { getSessionId } from "@/lib/utils";
+
 import { memo, useMemo } from "react";
 import { Sparkles, X } from "lucide-react";
 import {
@@ -43,6 +45,7 @@ function ActionWrapper({
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "custom-session-id": getSessionId(),
             },
             body: JSON.stringify({
               session_id: sandboxSessionId,
@@ -64,6 +67,7 @@ function ActionWrapper({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "custom-session-id": getSessionId(),
           },
           body: JSON.stringify(data),
         });

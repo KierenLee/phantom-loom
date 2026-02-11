@@ -1,3 +1,4 @@
+import { getSessionId } from "@/lib/utils";
 import { NextRequest } from "next/server";
 
 /**
@@ -22,6 +23,7 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "custom-session-id": getSessionId(),
         // 可以根据需要转发其他 header
       },
       body: JSON.stringify(body),
