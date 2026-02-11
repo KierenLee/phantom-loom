@@ -21,11 +21,6 @@ import fs from "fs";
 import path from "path";
 import { imageGenerationPrompt } from "@/prompt/generate-image";
 
-// Discover skills and get files to upload
-const { skill, files, instructions } = await createSkillTool({
-  skillsDirectory: "./skills",
-});
-
 /**
  * Handle POST requests for the chat API
  * @param req The request object
@@ -39,6 +34,11 @@ export async function POST(req: Request) {
   // Sanitize threadId to prevent path traversal
   threadId = threadId.replace(/[^a-zA-Z0-9-]/g, "");
   if (!threadId) threadId = "default";
+
+  // Discover skills and get files to upload
+  const { skill, files, instructions } = await createSkillTool({
+    skillsDirectory: "./skills",
+  });
 
   // Create bash tool with skill files
   const { tools: bashTools } = await createBashTool({
