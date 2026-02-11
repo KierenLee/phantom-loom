@@ -10,7 +10,7 @@ const execAsync = promisify(exec);
 export class LocalSandbox implements Sandbox {
   private root: string;
 
-  constructor(root: string = join(process.cwd(), "workspace")) {
+  constructor(root: string = join(process.cwd(), "./workspace")) {
     this.root = resolve(root);
     // Ensure workspace exists
     if (!existsSync(this.root)) {

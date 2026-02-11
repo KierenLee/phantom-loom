@@ -50,7 +50,7 @@ export async function POST(req: Request) {
   const { tools: bashTools } = await createBashTool({
     // files,
     // extraInstructions: instructions,
-    sandbox: new LocalSandbox(join(process.cwd(), "workspace", threadId)),
+    sandbox: new LocalSandbox(join(process.cwd(), "./workspace", threadId)),
     // Remove destination override to use default /workspace virtual path,
     // which maps to physical ./workspace via LocalSandbox
   });
