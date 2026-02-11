@@ -26,8 +26,8 @@ import { imageGenerationPrompt } from "@/prompt/generate-image";
 //   skillsDirectory: "./static/skills",
 // });
 
-// 检测 static/workspace 是否有文件夹，没有则创建一个
-const workspacePath = join(process.cwd(), "./static/workspace");
+// 检测 static 和 static/workspace 是否有文件夹，没有则创建一个
+const workspacePath = join(process.cwd(), "./workspace");
 if (!fs.existsSync(workspacePath)) {
   fs.mkdirSync(workspacePath, { recursive: true });
 }
@@ -50,9 +50,7 @@ export async function POST(req: Request) {
   const { tools: bashTools } = await createBashTool({
     // files,
     // extraInstructions: instructions,
-    sandbox: new LocalSandbox(
-      join(process.cwd(), "./static/workspace", threadId),
-    ),
+    sandbox: new LocalSandbox(join(process.cwd(), "workspace", threadId)),
     // Remove destination override to use default /workspace virtual path,
     // which maps to physical ./workspace via LocalSandbox
   });
