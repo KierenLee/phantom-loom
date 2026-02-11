@@ -12,7 +12,7 @@ import {
   experimental_createSkillTool as createSkillTool,
   createBashTool,
 } from "bash-tool";
-import { LocalSandbox } from "@/lib/tools/local-sandbox";
+import { Sandbox } from "@vercel/sandbox";
 import { join, resolve } from "path";
 import { GameRequirementAnalystPrompt } from "@/prompt/game-requirement-analyst";
 import { GameCodeGeneratorPrompt } from "@/prompt/game-coder";
@@ -47,12 +47,15 @@ export async function POST(req: Request) {
   if (!threadId) threadId = "default";
 
   // Create bash tool with skill files
+  const vercelSandbox = await Sandbox.create({
+    teamId: process.env.VERCEL_TEAM_ID!,
+    projectId: process.env.VERCEL_PROJECT_ID!,
+    token: process.env.VERCEL_TOKEN!,
+  });
   const { tools: bashTools } = await createBashTool({
     // files,
     // extraInstructions: instructions,
-    sandbox: new LocalSandbox(join(process.cwd(), "./workspace", threadId)),
-    // Remove destination override to use default /workspace virtual path,
-    // which maps to physical ./workspace via LocalSandbox
+    sandbox: vercelSandbox,
   });
 
   /** 核心工具集 - 包含 Image Generation Tool */
