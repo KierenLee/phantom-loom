@@ -42,6 +42,7 @@ export async function POST(req: Request) {
 
   // Create bash tool with skill files
   const vercelSandbox = await Sandbox.create({
+    timeout: 3 * 60 * 60 * 1000, // 3 hours
     teamId: process.env.VERCEL_TEAM_ID!,
     projectId: process.env.VERCEL_PROJECT_ID!,
     token: process.env.VERCEL_TOKEN!,
