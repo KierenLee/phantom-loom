@@ -26,6 +26,12 @@ import { imageGenerationPrompt } from "@/prompt/generate-image";
 //   skillsDirectory: "./static/skills",
 // });
 
+// 检测 static/workspace 是否有文件夹，没有则创建一个
+const workspacePath = join(process.cwd(), "./static/workspace");
+if (!fs.existsSync(workspacePath)) {
+  fs.mkdirSync(workspacePath, { recursive: true });
+}
+
 /**
  * Handle POST requests for the chat API
  * @param req The request object
