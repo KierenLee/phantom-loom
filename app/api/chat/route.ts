@@ -21,6 +21,11 @@ import fs from "fs";
 import path from "path";
 import { imageGenerationPrompt } from "@/prompt/generate-image";
 
+// Discover skills and get files to upload
+// const { skill, files, instructions } = await createSkillTool({
+//   skillsDirectory: "./skills",
+// });
+
 /**
  * Handle POST requests for the chat API
  * @param req The request object
@@ -35,15 +40,10 @@ export async function POST(req: Request) {
   threadId = threadId.replace(/[^a-zA-Z0-9-]/g, "");
   if (!threadId) threadId = "default";
 
-  // Discover skills and get files to upload
-  const { skill, files, instructions } = await createSkillTool({
-    skillsDirectory: "./skills",
-  });
-
   // Create bash tool with skill files
   const { tools: bashTools } = await createBashTool({
-    files,
-    extraInstructions: instructions,
+    // files,
+    // extraInstructions: instructions,
     sandbox: new LocalSandbox(join(process.cwd(), "workspace", threadId)),
     // Remove destination override to use default /workspace virtual path,
     // which maps to physical ./workspace via LocalSandbox
@@ -296,7 +296,7 @@ export async function POST(req: Request) {
       "X-goog-api-key": "AIzaSyDqKSB-qZh11TzALa14O0R1xYIYAlW0fSY",
     },
     tools: {
-      skill,
+      // skill,
       ...coreSubAgent,
       ...coreTools, // Main agent also has access to basic tools if needed
       ...a2uiTools,
