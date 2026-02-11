@@ -27,7 +27,7 @@ import { imageGenerationPrompt } from "@/prompt/generate-image";
 // });
 
 // 检测 static 和 static/workspace 是否有文件夹，没有则创建一个
-const workspacePath = join(process.cwd(), "./workspace");
+const workspacePath = path.join(process.cwd(), "./workspace");
 if (!fs.existsSync(workspacePath)) {
   fs.mkdirSync(workspacePath, { recursive: true });
 }
@@ -108,7 +108,7 @@ export async function POST(req: Request) {
 
             const imagesDir = resolve(
               process.cwd(),
-              `workspace/${threadId}/images`,
+              `${workspacePath}/${threadId}/images`,
             );
             if (!fs.existsSync(imagesDir)) {
               fs.mkdirSync(imagesDir, { recursive: true });
