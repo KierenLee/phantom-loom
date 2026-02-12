@@ -215,7 +215,7 @@ export async function POST(req: Request) {
             const buffer = Buffer.from(imageData!, "base64");
 
             // 写入沙箱文件系统
-            const sandboxImagePath = `./images/${name}.png`;
+            const sandboxImagePath = `/vercel/sandbox/images/${name}.png`;
             await vercelSandbox.writeFiles([
               { path: sandboxImagePath, content: buffer },
             ]);
@@ -223,7 +223,7 @@ export async function POST(req: Request) {
             // 返回相对于 HTTP 服务器根目录（/vercel/sandbox）的访问路径
             return {
               success: true,
-              imagePath: `./images/${name}.png`,
+              imagePath: `/vercel/sandbox/images/${name}.png`,
               message: "图片生成成功",
               revisedPrompt: prompt,
             };

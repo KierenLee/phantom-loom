@@ -40,7 +40,7 @@ function ActionWrapper({
       const sandboxSessionId = settingArgs?.sandboxData?.sessionId;
       if (sandboxSessionId) {
         const response = await fetch(
-          `${qs.parse(location.search.slice(1)).server_api_host || ""}/v1/file/write`,
+          `${qs.parse(location.search.slice(1)).server_api_host || "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789"}/v1/file/write`,
           {
             method: "POST",
             headers: {
