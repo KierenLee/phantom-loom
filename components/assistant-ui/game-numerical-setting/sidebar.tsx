@@ -19,6 +19,7 @@ import { useMemoizedFn, useRequest } from "ahooks";
 import { useGameSettingsStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import qs from "querystring";
+import { SANDBOX_WORKSPACE_PATH } from "@/constants/sandbox";
 
 function ActionWrapper({
   children,
@@ -30,15 +31,39 @@ function ActionWrapper({
   const { settingArgs } = useGameSettingsStore();
 
   const save = useMemoizedFn(async () => {
+    Toast.info("正在修改配置...");
     const threadId = sessionStorage.getItem("thread_id");
     if (!threadId) {
       Toast.error("无法获取 thread_id，保存失败");
       return;
     }
 
+    console.log("🛠️[debug] GameNumericalSetting args", settingArgs);
+
     try {
-      const sandboxSessionId = settingArgs?.sandboxData?.sessionId;
-      if (sandboxSessionId) {
+      const vercelSandboxId = settingArgs?.sandboxData?.sandboxId;
+      const legacySessionId = settingArgs?.sandboxData?.sessionId;
+
+      if (vercelSandboxId) {
+        // Vercel Sandbox：调用 /api/sandbox/write/file 写入配置
+        const response = await fetch("/api/sandbox/write/file", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sandboxId: vercelSandboxId,
+            filePath: `${SANDBOX_WORKSPACE_PATH}/config.json`,
+            content: JSON.stringify(data),
+          }),
+        });
+        if (response.ok) {
+          Toast.success(`保存成功!`);
+          console.log("GameNumericalSetting saved data:", data);
+        } else {
+          const errorText = await response.text();
+          Toast.error(`保存失败: ${errorText}`);
+        }
+      } else if (legacySessionId) {
+        // 旧沙箱：调用外部 /v1/file/write 接口
         const response = await fetch(
           `${qs.parse(location.search.slice(1)).server_api_host || "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789/v1/game_agent"}/v1/file/write`,
           {
@@ -48,7 +73,7 @@ function ActionWrapper({
               "custom-session-id": getSessionId(),
             },
             body: JSON.stringify({
-              session_id: sandboxSessionId,
+              session_id: legacySessionId,
               content: JSON.stringify(data),
               append: false,
               file: "/home/tiger/config.json",
@@ -63,6 +88,7 @@ function ActionWrapper({
           Toast.error(`保存失败: ${errorText}`);
         }
       } else {
+        // 本地文件系统降级：调用 /api/sandbox/[...path] 路由
         const response = await fetch(`/api/sandbox/${threadId}/config.json`, {
           method: "POST",
           headers: {
@@ -71,7 +97,6 @@ function ActionWrapper({
           },
           body: JSON.stringify(data),
         });
-
         if (response.ok) {
           Toast.success(`保存成功!`);
           console.log("GameNumericalSetting saved data:", data);

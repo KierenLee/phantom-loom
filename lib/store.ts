@@ -2,8 +2,11 @@ import { create } from "zustand";
 
 export interface SandboxData {
   url: string;
+  /** 旧沙箱（非 Vercel Sandbox）的 session ID */
   sessionId: string;
   configUrl: string;
+  /** Vercel Sandbox ID，有值时通过 /api/sandbox/write/file 写文件 */
+  sandboxId?: string;
 }
 
 interface PreviewState {
@@ -34,6 +37,8 @@ export interface GameNumericalSettingArgs {
   dataSchema: string; // JSON string
   sandboxData?: SandboxData;
 }
+
+export type GameNumericalSettingResult = GameNumericalSettingArgs;
 
 interface GameSettingsState {
   // Data received from the LLM Tool

@@ -2,23 +2,27 @@
 
 import { useEffect } from "react";
 import { makeAssistantToolUI } from "@assistant-ui/react";
-import { useGameSettingsStore, GameNumericalSettingArgs } from "@/lib/store";
+import {
+  useGameSettingsStore,
+  GameNumericalSettingArgs,
+  GameNumericalSettingResult,
+} from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Settings2 } from "lucide-react";
 import { Toast } from "@douyinfe/semi-ui-19";
 
 const GameNumericalSettingTool = ({
-  args,
+  result,
 }: {
-  args: GameNumericalSettingArgs;
+  result: GameNumericalSettingResult;
 }) => {
   const { setSettings, openSettings } = useGameSettingsStore();
 
   useEffect(() => {
-    if (args && args.initialData && args.dataSchema) {
-      setSettings(args);
+    if (result && result.initialData && result.dataSchema) {
+      setSettings(result);
     }
-  }, [args, setSettings]);
+  }, [result, setSettings]);
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 text-muted-foreground">
@@ -30,9 +34,9 @@ const GameNumericalSettingTool = ({
         variant="outline"
         size="sm"
         onClick={() => {
-          if (args && args.initialData) {
-            console.log("🛠️[debug] GameNumericalSettingTool args", args);
-            setSettings(args);
+          if (result && result.initialData) {
+            console.log("🛠️[debug] GameNumericalSettingTool args", result);
+            setSettings(result);
             openSettings();
           } else {
             Toast.error("Ops....未生成游戏配置");
@@ -47,10 +51,10 @@ const GameNumericalSettingTool = ({
 
 export const GameNumericalSetting = makeAssistantToolUI<
   GameNumericalSettingArgs,
-  undefined
+  GameNumericalSettingResult
 >({
   toolName: "displayGameNumericalSetting",
-  render: ({ args, status }) => {
+  render: ({ args, status, result }) => {
     if (status.type === "running") {
       return (
         <div className="flex items-center gap-2 text-muted-foreground">
@@ -64,6 +68,10 @@ export const GameNumericalSetting = makeAssistantToolUI<
       return <div className="text-destructive">生成配置出错</div>;
     }
 
-    return <GameNumericalSettingTool args={args} />;
+    if (!result) {
+      return <div className="text-destructive">未生成游戏配置</div>;
+    }
+
+    return <GameNumericalSettingTool result={result} />;
   },
 });
