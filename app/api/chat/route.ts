@@ -153,7 +153,7 @@ export async function POST(req: Request) {
     await vercelSandbox.runCommand({
       cmd: "python3",
       args: ["-m", "http.server", String(SANDBOX_PREVIEW_PORT)],
-      cwd: "./",
+      cwd: "/vercel/sandbox",
       detached: true,
     });
     console.log(`[Sandbox] HTTP 服务器已在端口 ${SANDBOX_PREVIEW_PORT} 启动`);
