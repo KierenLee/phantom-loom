@@ -255,8 +255,9 @@ export async function POST(req: Request) {
         description: z.string().describe("A description of the game"),
         imageUrl: z
           .string()
-          .describe("游戏封面图，通常是路径在 images 目录下的 avatar.png")
-          .default(`/api/sandbox/${threadId}/images/avatar.png`),
+          .describe(
+            `游戏封面图，通常是路径在${sandboxPreviewUrl}${SANDBOX_WORKSPACE_PATH}/images下`,
+          ),
       }),
       execute: async (args) => ({
         ...args,
