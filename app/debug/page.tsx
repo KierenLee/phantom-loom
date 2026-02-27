@@ -71,7 +71,7 @@ const RemoteApiUrl = memo(() => {
 });
 
 // 计算最终使用的 API URL
-const getApiUrl = () => {
+export const getApiUrl = () => {
   let currentBaseUrl = "";
   let threadId = "default";
   if (typeof window !== "undefined") {

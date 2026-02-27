@@ -15,91 +15,16 @@ import {
 import { Thread } from "@/components/assistant-ui/thread";
 import { PreviewPanel } from "@/components/assistant-ui/preview-panel";
 import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-import { memo, useEffect, useState } from "react";
-import { Ghost, Settings } from "lucide-react";
+import { memo } from "react";
+import { Ghost } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { getSessionId } from "@/lib/utils";
 
-const STORAGE_KEY = "phantom_loom_api_url";
-
-const DEFAULT_API_URL =
-  "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789/game_agent/api/generate";
-
-const RemoteApiUrl = memo(() => {
-  const [apiBaseUrl, setApiBaseUrl] = useState(DEFAULT_API_URL);
-
-  useEffect(() => {
-    const storedApi = localStorage.getItem(STORAGE_KEY);
-    setApiBaseUrl(storedApi || DEFAULT_API_URL);
-  }, []);
-
-  const handleSaveApi = () => {
-    localStorage.setItem(STORAGE_KEY, apiBaseUrl);
-    window.location.reload();
-  };
-
-  return (
-    <div className="grid gap-4 py-4">
-      <div className="grid gap-2">
-        <label htmlFor="api-url" className="text-sm font-medium">
-          API URL
-        </label>
-        <Input
-          id="api-url"
-          value={apiBaseUrl}
-          onChange={(e) => setApiBaseUrl(e.target.value)}
-          placeholder="/api/chat"
-        />
-        <p className="text-sm text-muted-foreground">
-          支持本地路径 (如 /api/chat) 或完整 URL (如 https://...)。
-        </p>
-        <Button onClick={handleSaveApi} className="w-full">
-          确认并重载
-        </Button>
-      </div>
-    </div>
-  );
-});
-
-// 计算最终使用的 API URL
-const getApiUrl = () => {
-  let currentBaseUrl = "";
-  let threadId = "default";
-  if (typeof window !== "undefined") {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      currentBaseUrl = stored;
-    }
-
-    threadId = getSessionId();
-  }
-
-  const separator = currentBaseUrl.includes("?") ? "&" : "?";
-  const urlWithThread = `${currentBaseUrl}${separator}threadId=${threadId}`;
-
-  // 如果是完整 URL (http/https)，使用代理
-  if (
-    currentBaseUrl.startsWith("http://") ||
-    currentBaseUrl.startsWith("https://")
-  ) {
-    return urlWithThread;
-  }
-
-  return urlWithThread;
-};
+const DEFAULT_API_URL = "https://se.spctplatform.com/game_agent/api/generate";
 
 /**
  * Debug 页面组件
@@ -114,6 +39,8 @@ const Page = memo(() => {
       api: DEFAULT_API_URL,
       headers: {
         "custom-session-id": getSessionId(),
+        "x-tt-env": "ppe_csj_game_agent",
+        "X-use-ppe": "1",
       },
     }),
   });
@@ -135,19 +62,6 @@ const Page = memo(() => {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" title="设置 API">
-                  <Settings className="size-5" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>设置 API Endpoint</DialogTitle>
-                </DialogHeader>
-                <RemoteApiUrl />
-              </DialogContent>
-            </Dialog> */}
             <ModeToggle />
           </div>
         </header>

@@ -20,6 +20,7 @@ import { useGameSettingsStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import qs from "querystring";
 import { SANDBOX_WORKSPACE_PATH } from "@/constants/sandbox";
+import { getApiUrl } from "@/app/debug/page";
 
 function ActionWrapper({
   children,
@@ -63,14 +64,22 @@ function ActionWrapper({
           Toast.error(`保存失败: ${errorText}`);
         }
       } else if (legacySessionId) {
+        const localApiUrl = getApiUrl().match(/^https?:\/\/[^/]+/)?.[0];
+        const ppeHeaders: Record<string, string> = localApiUrl
+          ? {
+              "x-tt-env": "ppe_csj_game_agent",
+              "X-use-ppe": "1",
+            }
+          : {};
         // 旧沙箱：调用外部 /v1/file/write 接口
         const response = await fetch(
-          `${qs.parse(location.search.slice(1)).server_api_host || "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789/v1/game_agent"}/v1/file/write`,
+          `${localApiUrl || "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789/v1/game_agent"}/v1/file/write`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               "custom-session-id": getSessionId(),
+              ...ppeHeaders,
             },
             body: JSON.stringify({
               session_id: legacySessionId,
