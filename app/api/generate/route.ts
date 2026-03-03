@@ -59,6 +59,8 @@ EXAMPLE - Revenue Dashboard:
 
 Generate JSONL patches now:`;
 
+console.log("SYSTEM_PROMPT", SYSTEM_PROMPT);
+
 export async function POST(req: Request) {
   const { prompt, context } = await req.json();
 

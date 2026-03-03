@@ -79,5 +79,5 @@ const GameCardView = ({ result }: { result: GameCardResult }) => {
 export const GameCard = makeAssistantToolUI<GameCardArgs, GameCardResult>({
   toolName: "displayGameMockup",
   render: ({ result }) =>
-    result ? <GameCardView result={result} /> : <div>游戏卡片未生成</div>,
+    result ? <GameCardView result={result} /> : <div>游戏卡片生成中...</div>,
 });
