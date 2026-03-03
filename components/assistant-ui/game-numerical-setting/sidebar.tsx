@@ -73,7 +73,7 @@ function ActionWrapper({
           : {};
         // 旧沙箱：调用外部 /v1/file/write 接口
         const response = await fetch(
-          `${localApiUrl || "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789/v1/game_agent"}/v1/file/write`,
+          `${localApiUrl || "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789"}/game_agent/v1/file/write`,
           {
             method: "POST",
             headers: {

@@ -24,7 +24,8 @@ import {
 } from "@/components/ui/tooltip";
 import { getSessionId } from "@/lib/utils";
 
-const DEFAULT_API_URL = "https://se.spctplatform.com/game_agent/api/generate";
+const DEFAULT_API_URL =
+  "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789/game_agent/api/generate";
 
 /**
  * Debug 页面组件
