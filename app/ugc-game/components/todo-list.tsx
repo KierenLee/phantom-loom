@@ -31,7 +31,7 @@ export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
 
     if (status.type === "running") {
       return (
-        <div className="sticky top-0 z-50 mx-auto mb-0 flex w-full max-w-[var(--thread-max-width)] animate-pulse items-center gap-2 rounded-xl border border-input bg-muted/50 px-4 py-3">
+        <div className="sticky top-0 z-0 mx-auto mb-0 flex w-full max-w-[var(--thread-max-width)] animate-pulse items-center gap-2 rounded-xl border border-input bg-muted/50 px-4 py-3">
           <div className="h-4 w-4 rounded-full bg-muted-foreground/30" />
           <span className="text-sm text-muted-foreground">
             正在处理待办事项...
@@ -56,7 +56,7 @@ export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
     const allCompleted = totalCount > 0 && completedCount === totalCount;
 
     return (
-      <div className="sticky top-0 z-50 mx-auto mb-0 w-full max-w-[var(--thread-max-width)]">
+      <div className="sticky top-0 z-0 mx-auto mb-0 w-full max-w-[var(--thread-max-width)]">
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <CollapsibleTrigger asChild>
             <button
