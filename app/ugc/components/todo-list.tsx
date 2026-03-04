@@ -25,7 +25,7 @@ type TodoArgs = TodoItem;
 export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
   toolName: "write_todos",
   render: ({ args, result, status }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
 
     if (status.type === "running") {
       return (
