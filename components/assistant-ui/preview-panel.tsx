@@ -1,11 +1,27 @@
 "use client";
 import { getSessionId } from "@/lib/utils";
 
-import { X } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ExternalLinkIcon,
+  Maximize2Icon,
+  MousePointerClickIcon,
+  RefreshCcwIcon,
+  X,
+} from "lucide-react";
 import { usePreviewStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useRequest } from "ahooks";
+import {
+  WebPreview,
+  WebPreviewBody,
+  WebPreviewNavigation,
+  WebPreviewNavigationButton,
+  WebPreviewUrl,
+} from "@/components/ai-elements/web-preview";
+import { isDebug } from "@/lib/debug";
 
 export const PreviewPanel = () => {
   const { previewUrl, title, isOpen, sandboxData, closePreview } =
@@ -62,26 +78,42 @@ export const PreviewPanel = () => {
     }
   }, [isOpen]);
 
+  const handleReload = () => {
+    setIframeKey((prev) => prev + 1);
+  };
+
+  const handleOpenInNewTab = () => {
+    previewUrl && window.open(previewUrl, "_blank");
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="flex h-full w-[600px] shrink-0 flex-col border-l border-border bg-background shadow-xl transition-all duration-300 ease-in-out xl:w-[800px]">
-      <div className="flex h-16 shrink-0 items-center justify-between border-b px-4">
+      <div className="flex h-16 shrink-0 items-center justify-between px-4">
         <h3 className="truncate font-semibold text-foreground">
           {title || "预览"}
         </h3>
-        <Button variant="ghost" size="icon" onClick={closePreview}>
-          <X className="h-4 w-4" />
-        </Button>
+        <div>
+          <WebPreviewNavigationButton onClick={handleReload} tooltip="刷新">
+            <RefreshCcwIcon className="size-4" />
+          </WebPreviewNavigationButton>
+          <WebPreviewNavigationButton
+            onClick={handleOpenInNewTab}
+            tooltip="在新页面打开"
+          >
+            <ExternalLinkIcon className="size-4" />
+          </WebPreviewNavigationButton>
+          <Button variant="ghost" size="icon" onClick={closePreview}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
       <div className="flex-1 overflow-hidden bg-muted/10">
         {previewUrl ? (
-          <iframe
-            key={iframeKey}
-            src={previewUrl}
-            className="h-full w-full border-0"
-            title={title || "预览"}
-          />
+          <WebPreview defaultUrl={previewUrl}>
+            <WebPreviewBody key={iframeKey} src={previewUrl} />
+          </WebPreview>
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">
             暂无预览内容

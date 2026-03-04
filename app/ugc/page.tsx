@@ -12,8 +12,8 @@ import {
   useChatRuntime,
   AssistantChatTransport,
 } from "@assistant-ui/react-ai-sdk";
-import { Thread } from "./components/thread";
-import { PreviewPanel } from "./components/preview-panel";
+import { Thread } from "@/components/assistant-ui/thread";
+import { PreviewPanel } from "@/components/assistant-ui/preview-panel";
 import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { memo } from "react";
 import { Ghost } from "lucide-react";

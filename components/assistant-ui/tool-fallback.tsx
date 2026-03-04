@@ -1,13 +1,44 @@
-import type { ToolCallMessagePartComponent } from "@assistant-ui/react";
+import React from "react";
 import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  XCircleIcon,
-} from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+  MessagePartState,
+  ToolCallMessagePartComponent,
+} from "@assistant-ui/react";
+import {
+  Tool,
+  ToolContent,
+  ToolHeader,
+  ToolInput,
+  ToolOutput,
+} from "@/components/ai-elements/tool";
+import {
+  Confirmation,
+  ConfirmationAccepted,
+  ConfirmationRejected,
+  ConfirmationRequest,
+  ConfirmationTitle,
+} from "@/components/ai-elements/confirmation";
+import { ToolUIPart } from "ai";
+import { CheckIcon, XIcon } from "lucide-react";
+import { nanoid } from "nanoid";
+import { safeParseJson } from "@/lib/json";
+import { isDebug } from "@/lib/debug";
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from "@/components/ai-elements/reasoning";
+import { useInterval } from "ahooks";
+import { AnimatePresence, motion } from "framer-motion";
+
+const statusType2state: Record<
+  MessagePartState["status"]["type"],
+  ToolUIPart["state"]
+> = {
+  running: "input-available",
+  complete: "output-available",
+  incomplete: "input-streaming",
+  "requires-action": "output-available",
+};
 
 export const ToolFallback: ToolCallMessagePartComponent = ({
   toolName,
@@ -15,79 +46,89 @@ export const ToolFallback: ToolCallMessagePartComponent = ({
   result,
   status,
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const state = statusType2state[status.type];
+  if (isDebug()) {
+    return (
+      <Tool>
+        <ToolHeader state={state} title={toolName} type={`tool-${toolName}`} />
+        <ToolContent>
+          <ToolInput input={safeParseJson(argsText, argsText)} />
+          <Confirmation
+            approval={{ approved: true, id: nanoid() }}
+            state="output-available"
+          >
+            <ConfirmationTitle>
+              <ConfirmationRequest>是否执行此工具？</ConfirmationRequest>
+              <ConfirmationAccepted>
+                <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
+                <span>接受</span>
+              </ConfirmationAccepted>
+              <ConfirmationRejected>
+                <XIcon className="size-4 text-destructive" />
+                <span>拒接</span>
+              </ConfirmationRejected>
+            </ConfirmationTitle>
+          </Confirmation>
+          {state === "output-available" && (
+            <ToolOutput errorText={(status as any).error} output={result} />
+          )}
+        </ToolContent>
+      </Tool>
+    );
+  }
+  return (
+    <div className="flex w-full items-center justify-start">
+      {
+        {
+          running: <Thinking />,
+          complete: null,
+          incomplete: null,
+          "requires-action": null,
+        }[status.type]
+      }
+    </div>
+  );
+};
 
-  const isCancelled =
-    status?.type === "incomplete" && status.reason === "cancelled";
-  const cancelledReason =
-    isCancelled && status.error
-      ? typeof status.error === "string"
-        ? status.error
-        : JSON.stringify(status.error)
-      : null;
+const thinkingTexts = [
+  "🎮 正在为你打造一个超有趣的游戏世界！",
+  "✨ 让我想想，加点什么惊喜元素呢？",
+  "🎨 正在疯狂绘制游戏地图中...",
+  "🤖 智能AI正在疯狂编写代码！",
+  "🎉 即将解锁你的专属游戏体验！",
+  "🚀 游戏引擎正在全速运转！",
+  "🧩 正在把所有好玩的元素拼在一起！",
+  "🎯 目标：让你玩得停不下来！",
+  "💡 灵感爆发中，创意无限！",
+  "🎪 准备好迎接一场游戏盛宴了吗？",
+];
+
+const Thinking = () => {
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+
+  useInterval(() => {
+    setCurrentIndex((prev) => (prev + 1) % thinkingTexts.length);
+  }, 2500);
 
   return (
-    <div
-      className={cn(
-        "aui-tool-fallback-root mb-4 flex w-full flex-col gap-3 rounded-lg border py-3",
-        isCancelled && "border-muted-foreground/30 bg-muted/30",
-      )}
-    >
-      <div className="aui-tool-fallback-header flex items-center gap-2 px-4">
-        {isCancelled ? (
-          <XCircleIcon className="aui-tool-fallback-icon size-4 text-muted-foreground" />
-        ) : (
-          <CheckIcon className="aui-tool-fallback-icon size-4" />
-        )}
-        <p
-          className={cn(
-            "aui-tool-fallback-title grow",
-            isCancelled && "text-muted-foreground line-through",
-          )}
-        >
-          {isCancelled ? "已取消工具调用: " : "使用工具: "}
-          <b>{toolName}</b>
-        </p>
-        <Button onClick={() => setIsCollapsed(!isCollapsed)}>
-          {isCollapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}
-        </Button>
-      </div>
-      {!isCollapsed && (
-        <div className="aui-tool-fallback-content flex flex-col gap-2 border-t pt-2">
-          {cancelledReason && (
-            <div className="aui-tool-fallback-cancelled-root px-4">
-              <p className="aui-tool-fallback-cancelled-header font-semibold text-muted-foreground">
-                取消原因:
-              </p>
-              <p className="aui-tool-fallback-cancelled-reason text-muted-foreground">
-                {cancelledReason}
-              </p>
-            </div>
-          )}
-          <div
-            className={cn(
-              "aui-tool-fallback-args-root px-4",
-              isCancelled && "opacity-60",
-            )}
-          >
-            <pre className="aui-tool-fallback-args-value whitespace-pre-wrap">
-              {argsText}
-            </pre>
-          </div>
-          {!isCancelled && result !== undefined && (
-            <div className="aui-tool-fallback-result-root border-t border-dashed px-4 pt-2">
-              <p className="aui-tool-fallback-result-header font-semibold">
-                结果:
-              </p>
-              <pre className="aui-tool-fallback-result-content whitespace-pre-wrap">
-                {typeof result === "string"
-                  ? result
-                  : JSON.stringify(result, null, 2)}
-              </pre>
-            </div>
-          )}
+    <Reasoning className="w-full">
+      <ReasoningTrigger getThinkingMessage={() => "策划中..."} />
+      <ReasoningContent>
+        <div className="relative h-6 overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={currentIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="absolute w-full"
+            >
+              {thinkingTexts[currentIndex]}
+            </motion.p>
+          </AnimatePresence>
         </div>
-      )}
-    </div>
+      </ReasoningContent>
+    </Reasoning>
   );
 };
