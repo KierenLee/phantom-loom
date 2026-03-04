@@ -25,7 +25,7 @@ import {
 import { getSessionId } from "@/lib/utils";
 
 const DEFAULT_API_URL = //"/api/mock-stream";
-  "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789/game_agent/api/generate";
+  "http://[fdbd:dc02:ff:fd00:c:387:17:2e92]:6789/game_agent/api/generate";
 
 /**
  * Debug 页面组件
