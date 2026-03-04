@@ -8,16 +8,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import {
-  ChevronDown,
-  ChevronRight,
-  CheckCircle2,
-  CircleCheck,
-} from "lucide-react";
+import { ChevronDown, CheckCircle2, CircleCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import * as m from "motion/react-m";
 
-type TodoItem = { content: string; status: "in_progress" | "completed" };
+type TodoItem = {
+  content: string;
+  status: "in_progress" | "completed" | "pending";
+};
 type TodoResult = TodoItem[] | string;
 type TodoArgs = TodoItem;
 
@@ -54,6 +52,9 @@ export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
     ).length;
     const totalCount = finalResult.length;
     const allCompleted = totalCount > 0 && completedCount === totalCount;
+    const activeTodoIndex = finalResult.findIndex(
+      (t) => t.status === "in_progress",
+    );
 
     return (
       <div className="sticky top-0 z-0 mx-auto mb-0 w-full max-w-[var(--thread-max-width)]">
@@ -69,7 +70,16 @@ export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
                 {allCompleted ? (
                   <CheckCircle2 className="h-4 w-4 text-green-500" />
                 ) : (
-                  <CircleCheck className="h-4 w-4 text-muted-foreground" />
+                  <m.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  >
+                    <CircleCheck className="h-4 w-4 text-muted-foreground" />
+                  </m.div>
                 )}
                 <span className="text-sm font-medium">
                   {allCompleted
@@ -104,59 +114,103 @@ export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
                   isOpen ? "rounded-b-xl" : "",
                 )}
               >
-                {finalResult.map((todo, index) => (
-                  <m.li
-                    key={todo.content}
-                    initial={false}
-                    animate={{
-                      opacity: isOpen ? 1 : 0,
-                      x: isOpen ? 0 : -20,
-                    }}
-                    transition={{
-                      delay: isOpen ? index * 0.05 : 0,
-                      duration: 0.3,
-                    }}
-                    className="flex items-center gap-3 py-1.5"
-                  >
-                    <div
-                      className={cn(
-                        "flex h-4 w-4 items-center justify-center rounded-full border-2 transition-colors duration-300",
-                        todo.status === "completed"
-                          ? "border-green-500 bg-green-500"
-                          : "border-muted-foreground",
-                      )}
+                {finalResult.map((todo, index) => {
+                  const isActive = index === activeTodoIndex;
+                  console.log(args, isActive);
+                  return (
+                    <m.li
+                      key={todo.content}
+                      initial={false}
+                      animate={{
+                        opacity: isOpen ? 1 : 0,
+                        x: isOpen ? 0 : -20,
+                      }}
+                      transition={{
+                        delay: isOpen ? index * 0.05 : 0,
+                        duration: 0.3,
+                      }}
+                      className="flex items-center gap-3 py-1.5"
                     >
-                      {todo.status === "completed" && (
-                        <m.svg
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 500,
-                            damping: 20,
-                          }}
-                          className="h-2.5 w-2.5 text-white"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={4}
-                        >
-                          <polyline points="20 6 9 17 4 12" />
-                        </m.svg>
-                      )}
-                    </div>
-                    <span
-                      className={cn(
-                        "text-sm transition-colors duration-300",
-                        todo.status === "completed"
-                          ? "text-muted-foreground line-through"
-                          : "text-foreground",
-                      )}
-                    >
-                      {todo.content}
-                    </span>
-                  </m.li>
-                ))}
+                      <m.div
+                        animate={
+                          isActive
+                            ? {
+                                scale: [1, 1.15, 1],
+                                borderColor: [
+                                  "var(--muted-foreground)",
+                                  "var(--primary)",
+                                  "var(--muted-foreground)",
+                                ],
+                              }
+                            : {}
+                        }
+                        transition={
+                          isActive
+                            ? {
+                                duration: 2,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                              }
+                            : {}
+                        }
+                        className={cn(
+                          "relative flex h-4 w-4 items-center justify-center rounded-full border-2 transition-colors duration-300",
+                          todo.status === "completed"
+                            ? "border-green-500 bg-green-500"
+                            : isActive
+                              ? "border-primary"
+                              : "border-muted-foreground",
+                        )}
+                      >
+                        {isActive && (
+                          <m.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{
+                              opacity: [0, 0.5, 0],
+                              scale: [1, 1.8, 2.2],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              ease: "easeOut",
+                            }}
+                            className="absolute inset-0 rounded-full bg-primary"
+                          />
+                        )}
+                        {todo.status === "completed" && (
+                          <m.svg
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 500,
+                              damping: 20,
+                            }}
+                            className="h-2.5 w-2.5 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={4}
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </m.svg>
+                        )}
+                      </m.div>
+                      <span
+                        className={cn(
+                          "text-sm transition-all duration-300",
+                          todo.status === "completed"
+                            ? "text-muted-foreground line-through opacity-70"
+                            : isActive
+                              ? "font-medium text-foreground"
+                              : "text-muted-foreground",
+                        )}
+                      >
+                        {todo.content}
+                      </span>
+                    </m.li>
+                  );
+                })}
               </ul>
             </m.div>
           </CollapsibleContent>
