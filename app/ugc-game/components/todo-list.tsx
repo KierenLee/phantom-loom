@@ -27,11 +27,11 @@ type TodoArgs = TodoItem;
 export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
   toolName: "write_todos",
   render: ({ args, result, status }) => {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
 
     if (status.type === "running") {
       return (
-        <div className="fixed bottom-[160px] left-1/2 z-50 mx-auto mb-0 flex w-full max-w-[var(--thread-max-width)] -translate-x-1/2 animate-pulse items-center gap-2 rounded-xl border border-input bg-muted/50 px-4 py-3">
+        <div className="sticky top-0 z-50 mx-auto mb-0 flex w-full max-w-[var(--thread-max-width)] animate-pulse items-center gap-2 rounded-xl border border-input bg-muted/50 px-4 py-3">
           <div className="h-4 w-4 rounded-full bg-muted-foreground/30" />
           <span className="text-sm text-muted-foreground">
             正在处理待办事项...
@@ -56,8 +56,35 @@ export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
     const allCompleted = totalCount > 0 && completedCount === totalCount;
 
     return (
-      <div className="fixed bottom-[160px] left-1/2 z-50 mx-auto mb-0 w-full max-w-[var(--thread-max-width)] -translate-x-1/2">
+      <div className="sticky top-0 z-50 mx-auto mb-0 w-full max-w-[var(--thread-max-width)]">
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+          <CollapsibleTrigger asChild>
+            <button
+              className={cn(
+                "flex w-full items-center justify-between border border-input bg-card px-4 py-3 text-left transition-all hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none",
+                isOpen ? "rounded-t-xl border-b-0" : "rounded-xl",
+              )}
+            >
+              <div className="flex items-center gap-3">
+                {allCompleted ? (
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                ) : (
+                  <CircleCheck className="h-4 w-4 text-muted-foreground" />
+                )}
+                <span className="text-sm font-medium">
+                  {allCompleted
+                    ? "All todos done"
+                    : `${completedCount}/${totalCount} todos`}
+                </span>
+              </div>
+              <m.div
+                animate={{ rotate: isOpen ? 180 : 0 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+              >
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </m.div>
+            </button>
+          </CollapsibleTrigger>
           <CollapsibleContent forceMount>
             <m.div
               initial={false}
@@ -73,8 +100,8 @@ export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
             >
               <ul
                 className={cn(
-                  "space-y-1 border-x border-t border-input bg-card px-4 pt-3",
-                  isOpen ? "rounded-t-xl" : "",
+                  "space-y-1 border-x border-b border-input bg-card px-4 pb-3",
+                  isOpen ? "rounded-b-xl" : "",
                 )}
               >
                 {finalResult.map((todo, index) => (
@@ -133,33 +160,6 @@ export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
               </ul>
             </m.div>
           </CollapsibleContent>
-          <CollapsibleTrigger asChild>
-            <button
-              className={cn(
-                "flex w-full items-center justify-between border border-input bg-card px-4 py-3 text-left transition-all hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none",
-                isOpen ? "rounded-b-xl border-t-0" : "rounded-xl",
-              )}
-            >
-              <div className="flex items-center gap-3">
-                {allCompleted ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                ) : (
-                  <CircleCheck className="h-4 w-4 text-muted-foreground" />
-                )}
-                <span className="text-sm font-medium">
-                  {allCompleted
-                    ? "All todos done"
-                    : `${completedCount}/${totalCount} todos`}
-                </span>
-              </div>
-              <m.div
-                animate={{ rotate: isOpen ? 0 : 180 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-              >
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              </m.div>
-            </button>
-          </CollapsibleTrigger>
         </Collapsible>
       </div>
     );
