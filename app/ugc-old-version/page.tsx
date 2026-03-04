@@ -12,8 +12,8 @@ import {
   useChatRuntime,
   AssistantChatTransport,
 } from "@assistant-ui/react-ai-sdk";
-import { Thread } from "./components/thread";
-import { PreviewPanel } from "./components/preview-panel";
+import { Thread } from "@/components/assistant-ui/thread";
+import { PreviewPanel } from "@/components/assistant-ui/preview-panel";
 import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { memo } from "react";
 import { Ghost } from "lucide-react";
@@ -24,8 +24,8 @@ import {
 } from "@/components/ui/tooltip";
 import { getSessionId } from "@/lib/utils";
 
-const DEFAULT_API_URL = //"/api/mock-stream";
-  "http://[fdbd:dc02:ff:fd00:c:387:17:2e92]:6789/game_agent/api/generate";
+const DEFAULT_API_URL =
+  "http://[fdbd:dc02:ff:fd00:2b:408:46:1941]:6789/game_agent/api/generate";
 
 /**
  * Debug 页面组件
@@ -35,6 +35,7 @@ const Page = memo(() => {
   const { isOpen } = usePreviewStore();
 
   const runtime = useChatRuntime({
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     transport: new AssistantChatTransport({
       api: DEFAULT_API_URL,
       headers: {
