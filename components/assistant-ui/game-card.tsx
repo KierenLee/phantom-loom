@@ -1,13 +1,8 @@
 "use client";
 
-import {
-  makeAssistantToolUI,
-  useAssistantApi,
-  useAssistantState,
-} from "@assistant-ui/react";
+import { makeAssistantToolUI } from "@assistant-ui/react";
 import { SandboxData, usePreviewStore } from "@/lib/store";
-import { useEffect } from "react";
-import { useMount } from "ahooks";
+import { useEffect, useState } from "react";
 
 interface GameCardArgs {
   title: string;
@@ -20,6 +15,9 @@ type GameCardResult = GameCardArgs;
 
 const GameCardView = ({ result }: { result: GameCardResult }) => {
   const { setPreview, setSandboxData } = usePreviewStore();
+  const [imageUrl, setImageUrl] = useState(
+    result.imageUrl || "/images/gameCardPlaceholder.jpeg",
+  );
 
   const getPreviewUrl = () => {
     return `/api/sandbox/${sessionStorage.getItem("thread_id")}/index.html`;
@@ -40,13 +38,18 @@ const GameCardView = ({ result }: { result: GameCardResult }) => {
     }
   }, [result.sandboxData, setSandboxData]);
 
+  useEffect(() => {
+    result.imageUrl && setImageUrl(result.imageUrl);
+  }, [result.imageUrl]);
+
   return (
     <div className="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="overflow-hidden rounded-lg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={result.imageUrl || "/images/gameCardPlaceholder.jpeg"}
+          src={imageUrl}
           alt={result.title}
+          onError={() => setImageUrl("/images/gameCardPlaceholder.jpeg")}
           className="aspect-video w-full object-cover transition-transform hover:scale-105"
         />
       </div>
