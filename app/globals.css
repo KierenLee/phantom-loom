@@ -89,37 +89,58 @@
 }
 
 .dark {
-  --background: oklch(0.12 0.03 295);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.18 0.05 290);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.12 0.03 295);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.7 0.12 290);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.2 0.05 290);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.2 0.05 290);
-  --muted-foreground: oklch(0.7 0.04 290);
-  --accent: oklch(0.2 0.05 290);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.6 0.25 25);
-  --border: oklch(0.25 0.05 290);
-  --input: oklch(0.25 0.05 290);
-  --ring: oklch(0.7 0.12 290);
-  --chart-1: oklch(0.7 0.12 290);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.14 0.04 295);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.7 0.12 290);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.2 0.05 290);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.25 0.05 290);
-  --sidebar-ring: oklch(0.7 0.12 290);
+  /* ── 基础背景 ── */
+  --background: oklch(0.09 0.01 270);          /* 深空黑，微带冷蓝，干净不发闷 */
+  --foreground: oklch(0.95 0.005 270);         /* 近白色文字，带一丝冷调 */
+
+  /* ── 卡片/容器 ── */
+  --card: oklch(0.14 0.015 270);               /* 深灰蓝卡片，与背景清晰分层 */
+  --card-foreground: oklch(0.95 0.005 270);
+
+  /* ── 弹出层 ── */
+  --popover: oklch(0.14 0.015 270);
+  --popover-foreground: oklch(0.95 0.005 270);
+
+  /* ── 主色（电光蓝紫） ── */
+  --primary: oklch(0.65 0.2 275);              /* 明亮蓝紫，游戏感十足 */
+  --primary-foreground: oklch(0.98 0 0);
+
+  /* ── 次要/容器背景 ── */
+  --secondary: oklch(0.18 0.02 270);           /* 比卡片略亮的层级 */
+  --secondary-foreground: oklch(0.9 0.005 270);
+
+  /* ── 弱化文字/禁用态 ── */
+  --muted: oklch(0.18 0.02 270);
+  --muted-foreground: oklch(0.6 0.02 270);     /* 次要文字，清晰可读 */
+
+  /* ── 强调/Hover 态 ── */
+  --accent: oklch(0.22 0.03 270);              /* hover 背景，微微提亮 */
+  --accent-foreground: oklch(0.95 0.005 270);
+
+  /* ── 危险/删除 ── */
+  --destructive: oklch(0.65 0.25 25);          /* 亮红，醒目但不刺眼 */
+
+  /* ── 边框/输入框 ── */
+  --border: oklch(0.22 0.03 270);              /* 微妙边框，不喧宾夺主 */
+  --input: oklch(0.22 0.03 270);
+  --ring: oklch(0.65 0.2 275);                 /* 聚焦环与主色一致 */
+
+  /* ── 图表色板（游戏主题，高饱和活力色） ── */
+  --chart-1: oklch(0.65 0.2 275);              /* 电光蓝紫（主色系） */
+  --chart-2: oklch(0.72 0.18 180);             /* 赛博青绿 */
+  --chart-3: oklch(0.75 0.15 85);              /* 琥珀金（成就/奖励感） */
+  --chart-4: oklch(0.65 0.22 330);             /* 品红/洋红 */
+  --chart-5: oklch(0.7 0.15 145);              /* 翡翠绿 */
+
+  /* ── 侧边栏 ── */
+  --sidebar: oklch(0.07 0.01 270);             /* 比背景更深一级，沉稳 */
+  --sidebar-foreground: oklch(0.95 0.005 270);
+  --sidebar-primary: oklch(0.65 0.2 275);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.18 0.02 270);
+  --sidebar-accent-foreground: oklch(0.95 0.005 270);
+  --sidebar-border: oklch(0.2 0.02 270);
+  --sidebar-ring: oklch(0.65 0.2 275);
 }
 
 @layer base {
