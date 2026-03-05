@@ -57,7 +57,12 @@ export const TodoListUI = makeAssistantToolUI<TodoArgs, TodoResult>({
     );
 
     return (
-      <div className="sticky top-0 z-0 mx-auto mb-0 w-full max-w-[var(--thread-max-width)]">
+      <div
+        style={{
+          zIndex: allCompleted ? 0 : 1,
+        }}
+        className="sticky top-0 z-0 mx-auto mb-0 w-full max-w-[var(--thread-max-width)]"
+      >
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <CollapsibleTrigger asChild>
             <button
