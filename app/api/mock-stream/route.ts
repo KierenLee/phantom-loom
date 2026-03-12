@@ -1,4 +1,4 @@
-import { a2uiMessage, cardMessage } from "./message";
+import { a2uiMessage, secoMessage } from "./message";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
   const stream = new ReadableStream({
     async start(controller) {
-      const messages = [...a2uiMessage];
+      const messages = [...secoMessage];
 
       for (const msg of messages) {
         controller.enqueue(encoder.encode(msg + "\n\n"));

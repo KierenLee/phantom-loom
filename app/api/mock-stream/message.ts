@@ -3353,3 +3353,16 @@ export const cardMessage = [
   'data: {"type":"finish","finishReason":"tool-calls"}',
   "data: [DONE]",
 ];
+
+export const secoMessage = [
+  'data: {"type":"start"}',
+  'data: {"type":"start-step"}',
+  'data: {"type":"text-start","id":"0"}',
+  'data: {"type":"tool-input-start","toolCallId":"call_bsts03as1oaac7irnzrbrrcz","toolName":"iframeMessageTool"}',
+  'data: {"type":"tool-input-available","toolCallId":"call_bsts03as1oaac7irnzrbrrcz","toolName":"iframeMessageTool","input":{"data":{"dslType":"component","action":"update","componentId":"btn-001","changes":{"props":{"text":"提交订单","variant":"primary","size":"large"},"style":{"backgroundColor":"#6366f1","borderRadius":"8px"}},"timestamp":1741771200000,"version":"v1.2.3"},"messageType":"dsl-change"}}',
+  'data: {"type":"tool-output-available","toolCallId":"call_bsts03as1oaac7irnzrbrrcz","output":{"success":true,"message":"DSL变更已成功发送到宿主编辑器","timestamp":1741771200000}}',
+  'data: {"type":"text-end","id":"0"}',
+  'data: {"type":"finish-step"}',
+  'data: {"type":"finish","finishReason":"tool-calls"}',
+  "data: [DONE]",
+];
